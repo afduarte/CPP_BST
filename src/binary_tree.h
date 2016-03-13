@@ -1,4 +1,5 @@
-#pragma once
+#ifndef BINARY_TREE
+#define BINARY_TREE
 
 #include <vector>
 #include <iostream>
@@ -58,3 +59,5 @@ public:
     // Writes the values, in-order, to an output stream
     friend std::ostream& operator<<(std::ostream &out, const binary_tree &value);
 };
+
+#endif
