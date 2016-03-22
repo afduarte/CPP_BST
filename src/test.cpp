@@ -12,38 +12,54 @@ int main(int argc, char **argv)
     binary_tree *tree = new binary_tree();
     string str = tree->inorder();
     if (str != string(""))
-        cerr << "ERROR - test 1 failed (basic constructor)" << endl;
+        cerr << "ERROR - test 1 failed (basic constructor): " << str << endl;
     else
-        cout << "Test 1 passed (basic constructor)" << endl;
+        cout << "Test 1 passed (basic constructor)" << str << endl;
     delete tree;
 
     // Test 2 - single value constructor
     tree = new binary_tree(50);
     str = tree->inorder();
     if (str != string("50"))
-        cerr << "ERROR - test 2 failed (single value constructor)" << endl;
+        cerr << "ERROR - test 2 failed (single value constructor): " << str << endl;
     else
-        cout << "Test 2 passed (single value constructor)" << endl;
+        cout << "Test 2 passed (single value constructor): " << str << endl;
     delete tree;
 
     // Test 3 - vector constructor
     tree = new binary_tree(vector<int>{10, 5, 12, 15, 8});
     str = tree->inorder();
-    if (str != string("5 8 10 12 15"))
-        cerr << "ERROR - test 3 failed (vector constructor)" << endl;
-    else
-        cout << "Test 3 passed (vector constructor)" << endl;
+    if (str != string("5 8 10 12 15")){
+        cerr << "ERROR - test 3 failed (vector constructor):" << str << endl;
+        cerr << "Should be:5 8 10 12 15" << endl;
+    }else
+        cout << "Test 3 passed (vector constructor):" << str << endl;
+        
+        
+    tree = new binary_tree();
+    tree->insert(5);
+    tree->insert(10);
+    tree->insert(12);
+    tree->insert(15);
+    tree->insert(8);
+    str = tree->inorder();
+    if (str != string("5 8 10 12 15")){
+        cerr << "ERROR - test 3 failed (vector constructor):" << str << endl;
+        cerr << "Should be:5 8 10 12 15" << endl;
+    }else
+        cout << "Test 3 passed (vector constructor):" << str << endl;
 
     // Test 4 - copy constructor part 1
     binary_tree *tree2 = new binary_tree(*tree);
     str = tree2->inorder();
-    if (str != string("5 8 10 12 15"))
-        cerr << "ERROR - test 4 failed (copy constructor part 1)" << endl;
-    else
-        cout << "Test 4 passed (copy constructor part 1)" << endl;
+    if (str != string("5 8 10 12 15")){
+        cerr << "ERROR - test 4 failed (copy constructor part 1):" << str << endl;
+        cerr << "Should be:5 8 10 12 15" << endl;
+    }else
+        cout << "Test 4 passed (copy constructor part 1): " << str << endl;
 
     // Test 5 - copy constructor part 2
-    tree2->remove(10);
+    // tree2->remove(10);
     if (tree->inorder() == tree2->inorder())
         cerr << "ERROR - test 5 failed (copy constructor part 2 - deep copy check)" << endl;
     else
@@ -57,10 +73,11 @@ int main(int argc, char **argv)
     tree->insert(4);
     tree->insert(5);
     str = tree->inorder();
-    if (str != string("4 5 8 10 12 15 25"))
-        cerr << "ERROR - test 6 failed (insertion check)" << endl;
-    else
-        cout << "Test 6 passed (insertion check)" << endl;
+    if (str != string("4 5 8 10 12 15 25")){
+        cerr << "ERROR - test 6 failed (insertion check): " << str << endl;
+        cerr << "Should be:4 5 8 10 12 15 25" << endl;
+    }else
+        cout << "Test 6 passed (insertion check): " << str << endl;
     
     // Test 7 - exists check
     if (tree->exists(4) && tree->exists(15) && !tree->exists(100) && !tree->exists(1))
@@ -74,66 +91,66 @@ int main(int argc, char **argv)
     tree->remove(8);
     str = tree->inorder();
     if (str != string("3 4 5 7 10 11 12 15"))
-        cerr << "ERROR - test 8 failed (remove check part 1 - value not in tree)" << endl;
+        cerr << "ERROR - test 8 failed (remove check part 1 - value not in tree): " << str << endl;
     else
-        cout << "Test 8 passed (remove check part 1 - value not in tree)" << endl;
+        cout << "Test 8 passed (remove check part 1 - value not in tree): " << str << endl;
 
     // Test 9 - remove check part 2
     tree->remove(15);
     str = tree->inorder();
     if (str != string("3 4 5 7 10 11 12"))
-        cerr << "ERROR - test 9 failed (remove check part 2 - leaf value)" << endl;
+        cerr << "ERROR - test 9 failed (remove check part 2 - leaf value): " << str << endl;
     else
-        cout << "Test 9 passed (remove check part 2 - leaf value)" << endl;
+        cout << "Test 9 passed (remove check part 2 - leaf value): " << str << endl;
 
     // Test 10 - remove check part 3
     tree->remove(12);
     str = tree->inorder();
     if (str != string("3 4 5 7 10 11"))
-        cerr << "ERROR - test 10 failed (remove check part 3 - right branch null)" << endl;
+        cerr << "ERROR - test 10 failed (remove check part 3 - right branch null): " << str << endl;
     else
-        cout << "Test 10 passed (remove check part 3 - right branch null)" << endl;
+        cout << "Test 10 passed (remove check part 3 - right branch null): " << str << endl;
 
     // Test 11 - remove check part 4
     tree->remove(4);
     str = tree->inorder();
     if (str != string("3 5 7 10 11"))
-        cerr << "ERROR - test 11 failed (remove check part 4 - left branch null)" << endl;
+        cerr << "ERROR - test 11 failed (remove check part 4 - left branch null): " << str << endl;
     else
-        cout << "Test 11 passed (remove check part 4 - left branch null)" << endl;
+        cout << "Test 11 passed (remove check part 4 - left branch null): " << str << endl;
 
     // Test 12 - remove check part 5
     tree->remove(10);
     str = tree->inorder();
     if (str != string("3 5 7 11"))
-        cerr << "ERROR - test 12 failed (remove check part 5 - no branches null)" << endl;
+        cerr << "ERROR - test 12 failed (remove check part 5 - no branches null): " << str << endl;
     else
-        cout << "Test 12 passed (remove check part 5 - no branches null)" << endl;
+        cout << "Test 12 passed (remove check part 5 - no branches null): " << str << endl;
     delete tree;
 
     // Test 13 - preorder print
     tree = new binary_tree(vector<int>{11, 5, 3, 7});
     str = tree->preorder();
     if (str != string("11 5 3 7"))
-        cerr << "ERROR - test 13 failed (pre-order print)" << endl;
+        cerr << "ERROR - test 13 failed (pre-order print): " << str << endl;
     else
-        cout << "Test 13 passed (pre-order print)" << endl;
+        cout << "Test 13 passed (pre-order print): " << str << endl;
 
     // Test 14 - postorder print
     str = tree->postorder();
     if (str != string("3 7 5 11"))
-        cerr << "ERROR - test 14 failed (post-order print)" << endl;
+        cerr << "ERROR - test 14 failed (post-order print): " << str << endl;
     else
-        cout << "Test 14 passed (post-order print)" << endl;
+        cout << "Test 14 passed (post-order print): " << str << endl;
 
     // Test 15 - assignment operator
     binary_tree temp = *tree;
     temp.insert(12);
     str = temp.inorder();
     if (str != string("3 5 7 11 12") && temp.inorder() != tree->inorder())
-        cerr << "ERROR - test 15 failed (assignment operator)" << endl;
+        cerr << "ERROR - test 15 failed (assignment operator): " << str << endl;
     else
-        cout << "Test 15 passed (assignment operator)" << endl;
+        cout << "Test 15 passed (assignment operator): " << str << endl;
 
     // Test 16 - comparison operator
     tree2 = new binary_tree(vector<int>{11, 5, 3, 7, 12});
@@ -149,9 +166,9 @@ int main(int argc, char **argv)
     *tree = *tree + 11;
     str = tree->inorder();
     if (str != string("3 4 5 7 10 11"))
-        cerr << "ERROR - test 17 failed (addition operator)" << endl;
+        cerr << "ERROR - test 17 failed (addition operator): " << str << endl;
     else
-        cout << "Test 17 passed (addition operator)" << endl;
+        cout << "Test 17 passed (addition operator): " << str << endl;
 
     // Test 18 - subtraction operator
     *tree = *tree - 10;
@@ -159,9 +176,9 @@ int main(int argc, char **argv)
     *tree = *tree - 15;
     str = tree->inorder();
     if (str != string("3 4 5 7"))
-        cerr << "ERROR - test 18 failed (subtraction operator)" << endl;
+        cerr << "ERROR - test 18 failed (subtraction operator): " << str << endl;
     else
-        cout << "Test 18 passed (subtraction operator)" << endl;
+        cout << "Test 18 passed (subtraction operator): " << str << endl;
 
     // Test 19 - output operator
     stringstream stream;

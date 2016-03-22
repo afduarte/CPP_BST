@@ -13,7 +13,12 @@ binary_tree::binary_tree(int value){
 
 // Creates a binary tree from a collection of existing values
 binary_tree::binary_tree(const std::vector<int> &values){
-
+    this->tree = new node;
+    // cout << "created tree, starting for loop on value " << values[0] << endl;
+    for(int i = 0;i<values.size();i++){
+        // cout << "looping on value " << values[i] << endl;
+        this->insert(values[i]);
+    }
 }
 
 // Creates a binary tree by copying an existing tree
@@ -26,14 +31,48 @@ binary_tree::~binary_tree(){
     
 }
 
-
+// Recursion function to insert value
+void insert_worker(node *tree, int value){
+    // if the tree is empty, just insert the value in this node
+    if(tree == nullptr){
+        tree = new node;
+    }    
+    if(!tree->data){
+        tree->data = value;
+    }else if(value < tree->data){
+        if(tree->left == nullptr){
+            tree->left = new node;
+            insert_worker(tree->left,value);
+        }else{
+            node *old = tree->left;
+            tree->left = new node;
+            insert_worker(tree->left,value);
+            tree->left->left = old;
+        }
+        
+    }else if(value > tree->data){
+        if(tree->right == nullptr){
+            tree->right = new node;
+            insert_worker(tree->right,value);
+        }else{
+            node *old = tree->right;
+            tree->right = new node;
+            insert_worker(tree->right,value);
+            tree->right->right = old;
+        }
+    }
+    
+}
 // Adds a value to the tree
 void binary_tree::insert(int value){
+    // leave all the work to the worker that can work recursively
+    insert_worker(this->tree,value);
 }
-
 // Removes a value from the tree
 void binary_tree::remove(int value){
-
+    if(this->tree->left == nullptr && this->tree->right == nullptr){
+        delete this->tree;
+    }
 }
 
 // Checks if a value is in the tree
@@ -42,24 +81,43 @@ bool binary_tree::exists(int value) const{
 }
 
 // Prints the tree to standard out in numerical order
-std::string binary_tree::inorder() const{
-    if(this->tree != nullptr){
+// Takes in the root of a tree so we can make it recursive
+std::string inorder_worker(node *tree){
+    // Check if the passed in node is a valid tree
+    if(tree != nullptr){
+        
         std::string text = "";
-        if(this->tree->left == nullptr){
-            return text;
-        }else{
-            this->tree->left->inorder();
+        
+        if(tree->left != nullptr){
+            #ifdef DEBUG
+            cout << "INORDER WORKER LEFT: " << text << endl;
+            #endif
+            text+= inorder_worker(tree->left);
+            text+= " ";
+        }
+        if(tree->data){
+            #ifdef DEBUG
+            cout << "INORDER WORKER DATA: " << text << endl;
+            #endif
+            text += std::to_string(tree->data);
         }
         
-        if(text != "") text+= " ";
-        
-        text += std::string(this->data);
-        
-        // text += this->tree->right->inorder();
+        if(tree->right != nullptr){
+            #ifdef DEBUG
+            cout << "INORDER WORKER RIGHT: " << text << endl;
+            #endif
+            text+= " ";
+            text+= inorder_worker(tree->right);
+        }
         return text;
     }else{
         return std::string("");
     }
+}
+
+// Handler to make it recursive
+std::string binary_tree::inorder() const{
+    return inorder_worker(this->tree);
 }
 
 // Prints the tree in pre-order
