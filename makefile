@@ -6,7 +6,7 @@ prepare: src/binary_tree.cpp
 
 debug: prepare src/test.cpp src/binary_tree.h
 	mkdir -p out
-	g++ src/test.cpp obj/binary_tree.o -o out/BSTtest -std=c++11 -D DEBUG
+	g++ -g src/test.cpp src/binary_tree.cpp -o out/BSTtest -std=c++11 -D DEBUG
 
 release: prepare src/test.cpp src/binary_tree.h
 	mkdir -p out
