@@ -14,9 +14,8 @@ binary_tree::binary_tree(int value){
 // Creates a binary tree from a collection of existing values
 binary_tree::binary_tree(const std::vector<int> &values){
     this->tree = new node;
-    // cout << "created tree, starting for loop on value " << values[0] << endl;
+    
     for(int i = 0;i<values.size();i++){
-        // cout << "looping on value " << values[i] << endl;
         this->insert(values[i]);
     }
 }
@@ -42,24 +41,14 @@ void insert_worker(node *tree, int value){
     }else if(value < tree->data){
         if(tree->left == nullptr){
             tree->left = new node;
-            insert_worker(tree->left,value);
-        }else{
-            node *old = tree->left;
-            tree->left = new node;
-            insert_worker(tree->left,value);
-            tree->left->left = old;
         }
+        insert_worker(tree->left, value);
         
     }else if(value > tree->data){
         if(tree->right == nullptr){
             tree->right = new node;
-            insert_worker(tree->right,value);
-        }else{
-            node *old = tree->right;
-            tree->right = new node;
-            insert_worker(tree->right,value);
-            tree->right->right = old;
         }
+        insert_worker(tree->right,value);
     }
     
 }
@@ -90,21 +79,21 @@ std::string inorder_worker(node *tree){
         
         if(tree->left != nullptr){
             #ifdef DEBUG
-            cout << "INORDER WORKER LEFT: " << text << endl;
+            // cout << "INORDER WORKER LEFT: " << text << endl;
             #endif
             text+= inorder_worker(tree->left);
             text+= " ";
         }
         if(tree->data){
             #ifdef DEBUG
-            cout << "INORDER WORKER DATA: " << text << endl;
+            // cout << "INORDER WORKER DATA: " << text << endl;
             #endif
             text += std::to_string(tree->data);
         }
         
         if(tree->right != nullptr){
             #ifdef DEBUG
-            cout << "INORDER WORKER RIGHT: " << text << endl;
+            // cout << "INORDER WORKER RIGHT: " << text << endl;
             #endif
             text+= " ";
             text+= inorder_worker(tree->right);
