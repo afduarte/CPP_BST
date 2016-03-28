@@ -34,19 +34,6 @@ int main(int argc, char **argv)
         cerr << "Should be:5 8 10 12 15" << endl;
     }else
         cout << "Test 3 passed (vector constructor):" << str << endl;
-        
-    binary_tree *tree_test = new binary_tree();
-    tree_test->insert(5);
-    tree_test->insert(10);
-    tree_test->insert(12);
-    tree_test->insert(15);
-    tree_test->insert(8);
-    str = tree_test->inorder();
-    if (str != string("5 8 10 12 15")){
-        cerr << "ERROR - test 3.5 failed (vector constructor):" << str << endl;
-        cerr << "Should be:5 8 10 12 15" << endl;
-    }else
-        cout << "Test 3.5 passed (vector constructor):" << str << endl;
 
     // Test 4 - copy constructor part 1
     binary_tree *tree2 = new binary_tree(*tree);
@@ -58,7 +45,7 @@ int main(int argc, char **argv)
         cout << "Test 4 passed (copy constructor part 1): " << str << endl;
 
     // Test 5 - copy constructor part 2
-    // tree2->remove(10);
+    tree2->remove(10);
     if (tree->inorder() == tree2->inorder())
         cerr << "ERROR - test 5 failed (copy constructor part 2 - deep copy check)" << endl;
     else
