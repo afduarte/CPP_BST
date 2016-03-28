@@ -35,16 +35,15 @@ int main(int argc, char **argv)
     }else
         cout << "Test 3 passed (vector constructor):" << str << endl;
         
-        
-    tree = new binary_tree();
-    tree->insert(5);
-    tree->insert(10);
-    tree->insert(12);
-    tree->insert(15);
-    tree->insert(8);
-    str = tree->inorder();
+    binary_tree *tree_test = new binary_tree();
+    tree_test->insert(5);
+    tree_test->insert(10);
+    tree_test->insert(12);
+    tree_test->insert(15);
+    tree_test->insert(8);
+    str = tree_test->inorder();
     if (str != string("5 8 10 12 15")){
-        cerr << "ERROR - test 3 failed (vector constructor):" << str << endl;
+        cerr << "ERROR - test 3.5 failed (vector constructor):" << str << endl;
         cerr << "Should be:5 8 10 12 15" << endl;
     }else
         cout << "Test 3.5 passed (vector constructor):" << str << endl;

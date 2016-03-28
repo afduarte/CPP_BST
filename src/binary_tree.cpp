@@ -20,9 +20,17 @@ binary_tree::binary_tree(const std::vector<int> &values){
     }
 }
 
+void deep_copy_worker(node * old_tree, node * new_tree,int value){
+    
+}
 // Creates a binary tree by copying an existing tree
 binary_tree::binary_tree(const binary_tree &rhs){
-
+    this->tree = new node;
+    if(rhs->tree->data){
+        deep_copy_worker(rhs->tree,this->tree,rhs->tree->data);
+    }else{
+        std::cout << "No data at the root of the tree, means empty tree" << std::endl;
+    }
 }
 
 // Destroys (cleans up) the tree
