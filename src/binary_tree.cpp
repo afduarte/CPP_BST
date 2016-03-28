@@ -1,8 +1,51 @@
 #include "binary_tree.h"
+#include <sstream>
+
+// Worker functions
+// Recursion function to insert value
+node* insert_worker(node *tree, int value){
+    // if the tree is empty, just insert the value in this node
+    if(tree == nullptr){
+        tree = new node;
+        tree->data = value;
+    }else if(value < tree->data){
+        tree->left = insert_worker(tree->left, value);
+    }else if(value > tree->data){
+        tree->right = insert_worker(tree->right, value);
+    }
+    
+    return tree;
+}
+
+std::string inorder_worker(node *tree){
+    // Check if the passed in node is a valid tree
+    if(tree != nullptr){
+        if(tree->left != nullptr && tree->right != nullptr){
+            return inorder_worker(tree->left)+" "+std::to_string(tree->data)+" "+inorder_worker(tree->right);
+        }else if(tree->right == nullptr && tree->left != nullptr){
+            return inorder_worker(tree->left)+" "+std::to_string(tree->data);
+        }else if(tree->left == nullptr && tree->right != nullptr){
+            return std::to_string(tree->data)+" "+inorder_worker(tree->right);
+        }else if(tree->left == nullptr && tree->right == nullptr){
+            return std::to_string(tree->data);
+        }
+    }else{
+        return "";
+    }
+}
+
+void deep_copy_worker(node* new_tree,node* old_tree){
+    std::stringstream stream(inorder_worker(old_tree));
+    int n;
+    while(stream >> n){
+        new_tree = insert_worker(new_tree,n);
+    }
+}
+
 
 // Creates an empty binary tree
 binary_tree::binary_tree(){
-    this->tree = new node;
+    this->tree = nullptr;
 }
 
 // Creates a binary tree with an initial value to store
@@ -13,61 +56,35 @@ binary_tree::binary_tree(int value){
 
 // Creates a binary tree from a collection of existing values
 binary_tree::binary_tree(const std::vector<int> &values){
-    this->tree = new node;
-    
-    for(int i = 0;i<values.size();i++){
-        this->insert(values[i]);
+    this->tree = nullptr;
+    for(auto &v : values){
+        this->insert(v);
     }
-}
-
-void deep_copy_worker(node * old_tree, node * new_tree,int value){
-    
 }
 // Creates a binary tree by copying an existing tree
 binary_tree::binary_tree(const binary_tree &rhs){
-    this->tree = new node;
-    if(rhs->tree->data){
-        deep_copy_worker(rhs->tree,this->tree,rhs->tree->data);
-    }else{
-        std::cout << "No data at the root of the tree, means empty tree" << std::endl;
+    std::stringstream stream(inorder_worker(rhs.tree));
+    int n;
+    this->tree = nullptr;
+    while(stream >> n){
+        this->insert(n);
     }
+    // this->tree = nullptr;
+    // deep_copy_worker(this->tree,rhs.tree);
 }
 
 // Destroys (cleans up) the tree
 binary_tree::~binary_tree(){
     
 }
-
-// Recursion function to insert value
-void insert_worker(node *tree, int value){
-    // if the tree is empty, just insert the value in this node
-    if(tree == nullptr){
-        tree = new node;
-    }    
-    if(!tree->data){
-        tree->data = value;
-    }else if(value < tree->data){
-        if(tree->left == nullptr){
-            tree->left = new node;
-        }
-        insert_worker(tree->left, value);
-        
-    }else if(value > tree->data){
-        if(tree->right == nullptr){
-            tree->right = new node;
-        }
-        insert_worker(tree->right,value);
-    }
-    
-}
 // Adds a value to the tree
 void binary_tree::insert(int value){
     // leave all the work to the worker that can work recursively
-    insert_worker(this->tree,value);
+    this->tree = insert_worker(this->tree,value);
 }
 // Removes a value from the tree
 void binary_tree::remove(int value){
-    if(this->tree->left == nullptr && this->tree->right == nullptr){
+    if(this->tree->left == nullptr && this->tree->right == nullptr && value == this->tree->data){
         delete this->tree;
     }
 }
@@ -77,40 +94,8 @@ bool binary_tree::exists(int value) const{
     return true;
 }
 
-// Prints the tree to standard out in numerical order
+// Returns a string representation of the tree to in numerical order
 // Takes in the root of a tree so we can make it recursive
-std::string inorder_worker(node *tree){
-    // Check if the passed in node is a valid tree
-    if(tree != nullptr){
-        
-        std::string text = "";
-        
-        if(tree->left != nullptr){
-            #ifdef DEBUG
-            // cout << "INORDER WORKER LEFT: " << text << endl;
-            #endif
-            text+= inorder_worker(tree->left);
-            text+= " ";
-        }
-        if(tree->data){
-            #ifdef DEBUG
-            // cout << "INORDER WORKER DATA: " << text << endl;
-            #endif
-            text += std::to_string(tree->data);
-        }
-        
-        if(tree->right != nullptr){
-            #ifdef DEBUG
-            // cout << "INORDER WORKER RIGHT: " << text << endl;
-            #endif
-            text+= " ";
-            text+= inorder_worker(tree->right);
-        }
-        return text;
-    }else{
-        return std::string("");
-    }
-}
 
 // Handler to make it recursive
 std::string binary_tree::inorder() const{
@@ -129,24 +114,27 @@ std::string binary_tree::postorder() const{
 
 // Copy assignment operator
 binary_tree& binary_tree::operator=(const binary_tree &other){
-    // return binary_tree();
+    if(this->tree == nullptr){
+        this->tree = new node;
+    }
+    deep_copy_worker(other.tree,this->tree);
+    return *this;
 }
 
 // Checks if two trees are equal
-bool binary_tree::operator==(const binary_tree &other) const
-{
-    return true;
+bool binary_tree::operator==(const binary_tree &other) const{
+    return (this->inorder() == other.inorder());
 }
 
 // Checks if two trees are not equal
-bool binary_tree::operator!=(const binary_tree &other) const
-{
-    return true;
+bool binary_tree::operator!=(const binary_tree &other) const{
+    return (this->inorder() != other.inorder());
 }
 
 // Inserts a new value into the binary tree
 binary_tree& binary_tree::operator+(int value){
-    // return binary_tree();
+    this->insert(value);
+    return *this;
 }
 
 // Removes a value from the binary tree
