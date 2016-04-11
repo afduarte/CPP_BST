@@ -15,7 +15,7 @@ struct node
     // The right branch of the tree
     node *right = nullptr;
     // The parent branch of the tree
-    node *parent = nullptr;
+    // node *parent = nullptr;
 };
 
 class binary_tree

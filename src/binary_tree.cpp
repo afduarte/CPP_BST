@@ -1,20 +1,24 @@
 #include "binary_tree.h"
 #include <sstream>
+#include <typeinfo>
 
 // Worker functions
 // Recursion function to insert value
 node* insert_worker(node *parent_node,node *tree, int value){
+    // if the passed in parent node is null, it means the tree is the root.
+    if(parent_node == nullptr){    
+        parent_node = tree;
+    }
     // if the tree is empty, just insert the value in this node
     if(tree == nullptr){
         tree = new node;
         tree->data = value;
-        tree->parent = parent_node;
+        // tree->parent = parent_node;
     }else if(value < tree->data){
-        tree->left = insert_worker(parent_node,tree->left, value);
+        tree->left = insert_worker(tree,tree->left, value);
     }else if(value > tree->data){
-        tree->right = insert_worker(parent_node,tree->right, value);
+        tree->right = insert_worker(tree,tree->right, value);
     }
-    
     return tree;
 }
 
@@ -35,12 +39,38 @@ std::string inorder_worker(node *tree){
     }
 }
 
-void deep_copy_worker(node* new_tree,node* old_tree){
-    std::stringstream stream(inorder_worker(old_tree));
-    int n;
-    while(stream >> n){
-        new_tree = insert_worker(new_tree,new_tree,n);
+std::string postorder_worker(node *tree){
+    // Check if the passed in node is a valid tree
+    if(tree != nullptr){
+        if(tree->left != nullptr && tree->right != nullptr){
+            return std::to_string(tree->data)+" "+inorder_worker(tree->left)+" "+inorder_worker(tree->right);
+        }else if(tree->right == nullptr && tree->left != nullptr){
+            return std::to_string(tree->data)+" "+inorder_worker(tree->left);
+        }else if(tree->left == nullptr && tree->right != nullptr){
+            return std::to_string(tree->data)+" "+inorder_worker(tree->right);
+        }else if(tree->left == nullptr && tree->right == nullptr){
+            return std::to_string(tree->data);
+        }
+    }else{
+        return "";
     }
+}
+
+// Return node and assign
+node * deep_copy_worker(node* new_tree,node* old_tree){
+    if(new_tree == nullptr){
+        new_tree = new node;
+    }
+    // Check if the passed in node is a valid tree
+    if(old_tree != nullptr){
+        new_tree->data = old_tree->data;
+        new_tree->left = deep_copy_worker(new_tree->left,old_tree->left);
+        new_tree->right = deep_copy_worker(new_tree->right,old_tree->right);
+        return new_tree;
+    }else{
+        return nullptr;
+    }
+            
 }
 
 // Find a node in the tree that holds a specified value
@@ -58,20 +88,70 @@ node* findNode(node* tree, int value){
     }
 }
 
-// Finds the node that is the parent of a node that holds a specified value
-// node* findParentNode(node* tree, int value){
-//     if(tree == nullptr){
-//         return nullptr;
-//     }else if(value == tree->left->data || value == tree->right->data || value == tree->data){
-//         return tree;
-//     }else if(value > tree->data){
-//         return findParentNode(tree->right,value);
-//     }else if(value < tree->data){
-//         return findParentNode(tree->left,value);
-//     }else{
-//         return nullptr;
-//     }
-// }
+//Finds the smallest value in the right subtree
+int smallest_right_val(node *root){
+	if (root->left != nullptr) {
+        return smallest_right_val(root->left);
+    }else {
+        return root->data;
+    }
+}
+
+void destroyer(node *root){
+	if (root != nullptr && typeid(root) == typeid(node*)){
+		if(root->left != nullptr){
+            destroyer(root->left);
+        }
+		if(root->right != nullptr){
+            destroyer(root->right);
+        }
+		delete root;
+	}
+}
+
+node * remove_worker(node *tree, node *parent, int value){
+    if(tree != nullptr){
+        // proceed to deletion if the node is found
+        if(tree->data == value){
+
+            node *temp = tree;
+            int smallestDataRight;
+
+            if (tree->left == nullptr && tree->right == nullptr){
+                tree = nullptr;
+                if(tree == parent){
+                    parent = nullptr;
+                }
+                delete temp;
+
+            }else if (tree->left == nullptr && tree->right != nullptr){
+                parent->right = tree->right;
+                temp->right = nullptr;
+                delete temp;
+
+            }else if (tree->left != nullptr && tree->right == nullptr){
+                parent->left = tree->left;
+                temp->left = nullptr;
+                delete temp;
+
+            }else{
+                smallestDataRight = smallest_right_val(tree->right);
+                tree = remove_worker(tree,parent,smallestDataRight);
+                tree->data = smallestDataRight;
+            }
+
+        }else{
+            if(tree->data > value){
+                parent->left = remove_worker(tree->left,tree,value);
+            }else{
+                parent->right = remove_worker(tree->right,tree,value);
+            }
+        }
+    }
+    // Deleting temp also deletes tree, so return parent.
+    // Doesn't affect since on the first call, parent==tree
+    return parent;
+}
 
 // Creates an empty binary tree
 binary_tree::binary_tree(){
@@ -93,50 +173,28 @@ binary_tree::binary_tree(const std::vector<int> &values){
 }
 // Creates a binary tree by copying an existing tree
 binary_tree::binary_tree(const binary_tree &rhs){
-    std::stringstream stream(inorder_worker(rhs.tree));
-    int n;
-    this->tree = nullptr;
-    while(stream >> n){
-        this->insert(n);
-    }
-    // this->tree = nullptr;
-    // deep_copy_worker(this->tree,rhs.tree);
+    this->tree = deep_copy_worker(this->tree,rhs.tree);
 }
 
 // Destroys (cleans up) the tree
 binary_tree::~binary_tree(){
+    destroyer(this->tree);
+    this->tree = nullptr;
     
 }
 // Adds a value to the tree
 void binary_tree::insert(int value){
     // leave all the work to the worker that can work recursively
-    this->tree = insert_worker(this->tree,this->tree,value);
-}
-
-void remove_worker(node *tree, int value){
-// if toRemove and parentNode are the same address, means the node is the root of the tree, just delete it
-// if it's a single child, delete the node and the link on the parent
-    node *toRemove = findNode(tree,value);
-    if(toRemove != nullptr){
-        node *parent = toRemove->parent;
-        if(toRemove->left == nullptr && toRemove->right == nullptr){
-            if(toRemove == parent->left){
-                std::cout << "Is left" << std::endl;
-                toRemove->parent->left = nullptr;
-            }else if(toRemove == toRemove->parent->right){
-                std::cout << "Is right" << std::endl;
-                parent->right = nullptr;
-            }
-        }
-        delete parent;
-        delete toRemove;
+    if(!this->exists(value)){
+        this->tree = insert_worker(this->tree,this->tree,value);
     }
-    
 }
 
 // Removes a value from the tree
 void binary_tree::remove(int value){
-    remove_worker(this->tree,value);
+    if(this->exists(value)){
+        this->tree = remove_worker(this->tree,this->tree,value);
+    }
 }
 
 // Checks if a value is in the tree
@@ -159,7 +217,7 @@ std::string binary_tree::preorder() const{
 
 // Prints the tree in post-order
 std::string binary_tree::postorder() const{
-    return std::string("");
+    return postorder_worker(this->tree);
 }
 
 // Copy assignment operator

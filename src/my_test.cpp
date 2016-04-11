@@ -84,6 +84,7 @@ int main(int argc, char **argv)
     // Test 9 - remove check part 2
     tree->remove(15);
     str = tree->inorder();
+    cout << "After removing 15: " << str << endl;
     if (str != string("3 4 5 7 10 11 12"))
         cerr << "ERROR - test 9 failed (remove check part 2 - leaf value): " << str << endl;
     else
