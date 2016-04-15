@@ -23,6 +23,7 @@ class binary_tree
 private:
     // Pointer to head of the tree
     node *tree = nullptr;
+    void remove_worker(node *local_tree, node *parent, int value);
 public:
     // Creates an empty binary tree
     binary_tree();

@@ -158,9 +158,14 @@ int main(int argc, char **argv)
         cout << "Test 17 passed (addition operator): " << str << endl;
 
     // Test 18 - subtraction operator
+    cout << "Before removing: " << tree->inorder() << endl;
     *tree = *tree - 10;
+    cout << "After removing 10: " << tree->inorder() << endl;
     *tree = *tree - 11;
+//    tree->remove(11);
+    cout << "After removing 11: " << tree->inorder() << endl;
     *tree = *tree - 15;
+    cout << "After removing 15: " << tree->inorder() << endl;
     str = tree->inorder();
     if (str != string("3 4 5 7"))
         cerr << "ERROR - test 18 failed (subtraction operator): " << str << endl;
@@ -184,7 +189,7 @@ int main(int argc, char **argv)
     tree = new binary_tree();
     stream >> *tree;
     if (tree->inorder() != string("2 3 4 5 7 10 11"))
-        cerr << "ERROR - test 20 failed (input operator)" << endl;
+        cerr << "ERROR - test 20 failed (input operator): " << tree->inorder() <<endl;
     else
         cout << "Test 20 passed (input operator)" << endl;
     delete tree;

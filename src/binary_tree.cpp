@@ -111,7 +111,7 @@ int smallest_right_val(node *root){
 }
 
 void destroyer(node *root){
-	if (root != nullptr && typeid(root) == typeid(node*)){
+	if (root != nullptr){
 		if(root->left != nullptr){
             destroyer(root->left);
         }
@@ -122,79 +122,88 @@ void destroyer(node *root){
 	}
 }
 
-void remove_worker(node *tree, node *parent, int value){
-    if(tree != nullptr){
+//node * binary_tree::getTree(binary_tree *object){
+//    return object->tree;
+//}
+
+void binary_tree::remove_worker(node *local_tree, node *parent, int value){
+//    node * local_tree = tree->tree;
+    if(local_tree != nullptr){
         // proceed to deletion if the node is found
-        if(tree->data == value){
+        if(local_tree->data == value){
 
-            node *temp = tree;
-
-            if (tree->left == nullptr && tree->right == nullptr){
+            node *temp = local_tree;
+            // No children
+            if (local_tree->left == nullptr && local_tree->right == nullptr){
                 if(parent != nullptr){
                     if(parent->left != nullptr && value == parent->left->data){
+                        // if tree is left child of parent, make parent->left null
                         parent->left = nullptr;
+                        delete temp;
                     }else{
+                        // if tree is right child of parent, make parent->right null
                         parent->right = nullptr;
+                        delete temp;
                     }
                 }else{
-                    tree = nullptr;
+                    // if tree has no parent, delete and set tree to null
+                    delete this->tree;
+                    this->tree = nullptr;
+                    delete temp;
                 }
 
-//                delete temp;
             // Single child to the right
-            }else if (tree->left == nullptr && tree->right != nullptr){
+            }else if (local_tree->left == nullptr && local_tree->right != nullptr){
                 if(parent != nullptr) {
-                    // Value to the left of the parent
+                    // if tree is left child of parent, parent->left becomes tree->right
                     if(parent->left != nullptr && value == parent->left->data){
-                        parent->left = tree->right;
-                        // Value to the right of the parent
+                        parent->left = local_tree->right;
+                    // if tree is right child of parent, parent->right becomes tree->right
                     }else{
-                        parent->right = tree->right;
+                        parent->right = local_tree->right;
                     }
-                    tree = nullptr;
-
+                // if tree has no parent, set tree to its right child
                 }else{
-
+                    this->tree = temp->right;
+                    temp->right = nullptr;
                 }
-//                tree->right = nullptr;
-//                delete temp;
+                delete temp;
+                temp = nullptr;
+
             // Single child to the left
-            }else if (tree->left != nullptr && tree->right == nullptr){
+            }else if (local_tree->left != nullptr && local_tree->right == nullptr){
                 if(parent != nullptr) {
                     // Value is on the left of the parent
                     if(parent->left != nullptr && value == parent->left->data){
-                        parent->left = tree->left;
+                        parent->left = local_tree->left;
                         //Value is on the right of the parent
                     }else{
-                        parent->right = tree->left;
+                        parent->right = local_tree->left;
                     }
-                    tree = nullptr;
+                    local_tree = nullptr;
+                // if tree has no parent, set tree to its left child
                 }else{
-                    tree = tree->left;
+                    this->tree = temp->left;
                     temp->left = nullptr;
                 }
-//                delete temp;
+                delete temp;
+                temp = nullptr;
+
 
             }else{
-                int small_val_right = smallest_right_val(tree->right);
-                remove_worker(tree,parent,small_val_right);
-                tree->data = small_val_right;
-
+                int small_val_right = smallest_right_val(local_tree->right);
+                remove_worker(local_tree,parent,small_val_right);
+                local_tree->data = small_val_right;
             }
 
-
-
         }else{
-            if(tree->data > value){
-                remove_worker(tree->left,tree,value);
+            if(local_tree->data > value){
+                remove_worker(local_tree->left,local_tree,value);
             }else{
-                remove_worker(tree->right,tree,value);
+                remove_worker(local_tree->right,local_tree,value);
             }
         }
     }
-    // Deleting temp also deletes tree, so return parent.
-    // Doesn't affect since on the first call, parent==tree
-//    return parent;
 }
 
 // Creates an empty binary tree
@@ -251,9 +260,9 @@ bool binary_tree::exists(int value) const{
 
 // Handler to make it recursive
 std::string binary_tree::inorder() const{
-//    return inorder_worker(this->tree);
-    return "";
+    return inorder_worker(this->tree);
 }
+
 
 // Prints the tree in pre-order
 std::string binary_tree::preorder() const{
@@ -270,7 +279,7 @@ binary_tree& binary_tree::operator=(const binary_tree &other){
     if(this->tree == nullptr){
         this->tree = new node;
     }
-    deep_copy_worker(other.tree,this->tree);
+    this->tree = deep_copy_worker(this->tree,other.tree);
     return *this;
 }
 
