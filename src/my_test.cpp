@@ -170,8 +170,11 @@ int main(int argc, char **argv)
     // Test 19 - output operator
     stringstream stream;
     stream << *tree;
-    if (stream.str() != string("3 4 5 7"))
-        cerr << "ERROR - test 19 failed (output operator)" << endl;
+
+    if(stream.str() == string("3 4 5 7 10 11"))
+        cerr << "Test 19 passed (output operator) but the remove before failed, string is: " << stream.str() << endl;
+    else if (stream.str() != string("3 4 5 7"))
+        cerr << "ERROR - test 19 failed (output operator): " << stream.str() << endl;
     else
         cout << "Test 19 passed (output operator)" << endl;
     delete tree;
