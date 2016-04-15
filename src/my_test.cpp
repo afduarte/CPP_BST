@@ -34,20 +34,6 @@ int main(int argc, char **argv)
         cerr << "Should be:5 8 10 12 15" << endl;
     }else
         cout << "Test 3 passed (vector constructor):" << str << endl;
-        
-        
-    tree = new binary_tree();
-    tree->insert(5);
-    tree->insert(10);
-    tree->insert(12);
-    tree->insert(15);
-    tree->insert(8);
-    str = tree->inorder();
-    if (str != string("5 8 10 12 15")){
-        cerr << "ERROR - test 3 failed (vector constructor):" << str << endl;
-        cerr << "Should be:5 8 10 12 15" << endl;
-    }else
-        cout << "Test 3.5 passed (vector constructor):" << str << endl;
 
     // Test 4 - copy constructor part 1
     binary_tree *tree2 = new binary_tree(*tree);
@@ -59,7 +45,7 @@ int main(int argc, char **argv)
         cout << "Test 4 passed (copy constructor part 1): " << str << endl;
 
     // Test 5 - copy constructor part 2
-    // tree2->remove(10);
+    tree2->remove(10);
     if (tree->inorder() == tree2->inorder())
         cerr << "ERROR - test 5 failed (copy constructor part 2 - deep copy check)" << endl;
     else
@@ -98,6 +84,7 @@ int main(int argc, char **argv)
     // Test 9 - remove check part 2
     tree->remove(15);
     str = tree->inorder();
+    cout << "After removing 15: " << str << endl;
     if (str != string("3 4 5 7 10 11 12"))
         cerr << "ERROR - test 9 failed (remove check part 2 - leaf value): " << str << endl;
     else
@@ -171,9 +158,14 @@ int main(int argc, char **argv)
         cout << "Test 17 passed (addition operator): " << str << endl;
 
     // Test 18 - subtraction operator
+    cout << "Before removing: " << tree->inorder() << endl;
     *tree = *tree - 10;
+    cout << "After removing 10: " << tree->inorder() << endl;
     *tree = *tree - 11;
+//    tree->remove(11);
+    cout << "After removing 11: " << tree->inorder() << endl;
     *tree = *tree - 15;
+    cout << "After removing 15: " << tree->inorder() << endl;
     str = tree->inorder();
     if (str != string("3 4 5 7"))
         cerr << "ERROR - test 18 failed (subtraction operator): " << str << endl;
@@ -183,8 +175,11 @@ int main(int argc, char **argv)
     // Test 19 - output operator
     stringstream stream;
     stream << *tree;
-    if (stream.str() != string("3 4 5 7"))
-        cerr << "ERROR - test 19 failed (output operator)" << endl;
+
+    if(stream.str() == string("3 4 5 7 10 11"))
+        cerr << "Test 19 passed (output operator) but the remove before failed, string is: " << stream.str() << endl;
+    else if (stream.str() != string("3 4 5 7"))
+        cerr << "ERROR - test 19 failed (output operator): " << stream.str() << endl;
     else
         cout << "Test 19 passed (output operator)" << endl;
     delete tree;
@@ -194,7 +189,7 @@ int main(int argc, char **argv)
     tree = new binary_tree();
     stream >> *tree;
     if (tree->inorder() != string("2 3 4 5 7 10 11"))
-        cerr << "ERROR - test 20 failed (input operator)" << endl;
+        cerr << "ERROR - test 20 failed (input operator): " << tree->inorder() <<endl;
     else
         cout << "Test 20 passed (input operator)" << endl;
     delete tree;

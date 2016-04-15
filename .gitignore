@@ -1,3 +1,6 @@
 out/
 obj/
 .vscode/
+.idea/
+CMakeLists.txt
+browse.VC.db
