@@ -25,6 +25,6 @@ test: release
 
 clean:
 	@echo "Removing out/ and obj/"
-	@rm -r out
-	@rm -r obj
+	@-rm -r out
+	@-rm -r obj
 	@echo "Project is clean"
